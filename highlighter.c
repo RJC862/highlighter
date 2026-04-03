@@ -32,24 +32,49 @@ static const char* COLOR_RESET_COLOR = "\033[0m";
 // ...
 
 typedef struct Settings{
-	FILE* input_stream, output_stream;
+	FILE *input_stream, *output_stream;
 	char *search_text, *prefix, *postfix, *color_str;
 	bool no_color;
-}
+} Settings;
 
 void print_help(){
-	//code
+
+	// prints the help menu for the application
+	
+	printf("usage: ./highlighter [-h] [-i INPUT] [-o OUTPUT] [-c {RED,GREEN,BLUE,YELLOW,MAGENTA,CYAN,WHITE}] [--no-color] [--prefix PREFIX] [--postfix POSTFIX] text\n\n"
+		"highlighter\n\n"
+
+		"positional arguments:\n"
+		"  text			text to match and highlight\n\n"
+
+		"options:\n"
+		"-h, -- help 		show this help message and exit\n"
+		"-i INPUT, --input INPUT\n"
+		"			input file (default:stdin)\n"
+		"-o OUTPUT, --output OUTPUT\n"
+		"			output file (default: stdout)\n"
+		"-c {RED,GREEN,BLUE,YELLOW,MAGENTA,CYAN,WHITE}, --color {RED,GREEN,BLUE,YELLOW,MAGENTA,CYAN,WHITE}\n"
+		"			color option (default: RED)\n"
+		"--no-color		do not print color\n"
+		"--prefix PREFIX	print prefix before highlighted text (default: empty string)\n"
+		"--postfix POSTFIX 	print postfix after highlighted text (default: empty string)\n\n"
+
+		"examples:\n"
+		" ./highlighter -i file.txt \"error\" (highlights \"error\" in file.txt in red via STDOUT)\n"
+		" ./highlighter -c GREEN \"warning\" (highlights \"warning\" in green from STDIN to STDOUT)\n"
+		" ./highlighter --prefix \">>\" --postfix \"<<\" \"keyword\" -o out.txt (highlights \"keyword\" with prefix \">>\" and postfix \"<<\" in red from STDIN to out.txt)\n");
 }
 
 
 void print_error(const char* error_message){
 	// printing error message
-	printf("Error: %s", error_message);
+	printf("Error: %s\n", error_message);
 }
 
 void output_final_result(int count, const char *search_text){
+	//code
 }
-//code
+
 
 const char *get_color_code(const char *color_str){
 	//code
@@ -73,7 +98,7 @@ int process_args(int argc, char *argv[], Settings *settings){
 	    		print_help();
 			return 0;
 
-		} else if (strcmp(argv[i], "-i") == 0 || strcpm(argv[i], "--input") == 0){
+		} else if (strcmp(argv[i], "-i") == 0 || strcmp(argv[i], "--input") == 0){
 
 			// opening the input file for reading
 			
@@ -83,7 +108,7 @@ int process_args(int argc, char *argv[], Settings *settings){
 				i += 1;
 			} else {
 				print_error("Missing file argument");
-				return -1
+				return -1;
 			}
 			
 			// checking that the file exists
@@ -117,29 +142,26 @@ int process_args(int argc, char *argv[], Settings *settings){
 			// checking that there is an argument after the flag
 			if (i+1<argc){
 				// checking that the color is valid
-				switch (argv[i+1]){
-				    case("GREEN"):
+				
+				    if (strcmp(argv[i+1], "GREEN") == 0){
 					    settings->color_str = "GREEN";
-					    break;
-				    case("BLUE"):
+				    } else if (strcmp(argv[i+1],"BLUE") == 0){
 					    settings->color_str = "BLUE";
-					    break;
-				    case("YELLOW"):
+				    } else if(strcmp(argv[i+1], "YELLOW") == 0){
 					    settings->color_str = "YELLOW";
-					    break;
-				    case("MAGENTA"):
+				    } else if (strcmp(argv[i+1], "MAGENTA") == 0){
 					    settings->color_str = "MAGENTA";
-					    break;
-				    case("WHITE"):
+				    } else if (strcmp(argv[i+1], "WHITE") == 0){
 					    settings->color_str = "WHITE";
-					    break;
-				    case("RED"):
+				    } else if (strcmp(argv[i+1], "RED") == 0){
 					    settings->color_str = "RED";
-					    break;
-				    default:
+				    } else{
 					    print_error("Invalid color");
 					    return -1;
-				}
+				    }
+			} else {
+				print_error("Missing color argument");
+				return -1;
 			}
 
 		} else if (strcmp(argv[i], "--no-color")==0){
@@ -198,7 +220,14 @@ int process_args(int argc, char *argv[], Settings *settings){
 }
 
 int main (int argc, char *argv[]){
-	Settings setting = {.input_stream = stdin, .output_stream = stdout, .color_str = "RED", .search_text = "", .prefix = "", .postfix = "", .no_color = false};
+	Settings settings = {	
+		.input_stream = stdin, 
+		.output_stream = stdout, 
+		.color_str = "RED", 
+		.search_text = "", 
+		.prefix = "", 
+		.postfix = "", 
+		.no_color = false};
 
 	int process_args_status = process_args(argc, argv, &settings);
 
