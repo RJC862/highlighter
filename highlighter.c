@@ -31,8 +31,176 @@ static const char* COLOR_RESET_COLOR = "\033[0m";
 // int parse_line(Settings* settings, char* line)
 // ...
 
+typedef struct Settings{
+	FILE* input_stream, output_stream;
+	char *search_text, *prefix, *postfix, *color_str;
+	bool no_color;
+}
 
-int main(int argc, char *argv[]) {
-    // TODO: implement the highlighter program
-    return 0;
+void print_help(){
+	//code
+}
+
+
+void print_error(const char* error_message){
+	// printing error message
+	printf("Error: %s", error_message);
+}
+
+void output_final_result(int count, const char *search_text){
+}
+//code
+
+const char *get_color_code(const char *color_str){
+	//code
+}
+
+int process_args(int argc, char *argv[], Settings *settings){
+
+	// sets data fields in the settings struct
+	
+	// tracking positional argument count
+	int positional_arguments = 0;
+
+	// parsing command line arguments
+	for (int i = 1; i < argc; i++){
+
+		// identifying arguments
+
+		if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0){
+
+			// printing the help menu then exiting
+	    		print_help();
+			return 0;
+
+		} else if (strcmp(argv[i], "-i") == 0 || strcpm(argv[i], "--input") == 0){
+
+			// opening the input file for reading
+			
+			// checking that there exists an argument after the flag
+			if (i + 1 < argc){
+		    		settings->input_stream = fopen(argv[i+1], "r");
+				i += 1;
+			} else {
+				print_error("Missing file argument");
+				return -1
+			}
+			
+			// checking that the file exists
+			if (settings->input_stream == NULL) {
+				print_error("Invalid file name");
+				return -1;
+			}
+
+		} else if (strcmp(argv[i], "-o") == 0 || strcmp(argv[i], "--output") == 0){
+
+			// opening output file for writing
+			
+			//checking that there exists an argument after the flag
+			if (i + 1 < argc){
+				settings->output_stream = fopen(argv[i+1], "w");
+				i += 1;
+			} else {
+				print_error("Missing file argument");
+				return -1;
+			}
+
+			// checking that the file exists
+			if (settings->output_stream == NULL){
+				print_error("Invalid file name");
+				return -1;
+			}
+
+		} else if (strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "--color") == 0){
+			// setting the highlight color
+
+			// checking that there is an argument after the flag
+			if (i+1<argc){
+				// checking that the color is valid
+				switch (argv[i+1]){
+				    case("GREEN"):
+					    settings->color_str = "GREEN";
+					    break;
+				    case("BLUE"):
+					    settings->color_str = "BLUE";
+					    break;
+				    case("YELLOW"):
+					    settings->color_str = "YELLOW";
+					    break;
+				    case("MAGENTA"):
+					    settings->color_str = "MAGENTA";
+					    break;
+				    case("WHITE"):
+					    settings->color_str = "WHITE";
+					    break;
+				    case("RED"):
+					    settings->color_str = "RED";
+					    break;
+				    default:
+					    print_error("Invalid color");
+					    return -1;
+				}
+			}
+
+		} else if (strcmp(argv[i], "--no-color")==0){
+
+			// disabling color printing
+
+			settings->no_color = true;
+
+		} else if (strcmp(argv[i], "--prefix")==0){
+
+			// setting the prefix
+
+			// checking that there is an argument after the flag
+			if (i + 1 < argc){
+				settings->prefix = argv[i+1];
+			} else {
+				print_error("Missing prefix argument");
+				return -1;
+			}
+
+		} else if (strcmp(argv[i], "--postfix") == 0){
+
+			// setting the postfix
+			
+			// checking that there is an argument after the flag
+			if (i + 1 < argc){
+				settings->postfix = argv[i+1];
+			} else {
+				print_error("Missing postfix argument");
+				return -1;
+			}
+
+		} else {
+			// setting the text to highlight
+			
+			// checking if there already exists a chosen text to highlight
+			if (positional_arguments >= 1){
+				print_error("Only one positional argument allowed");
+				return -1;
+			}
+
+			settings->search_text = argv[i];
+
+			positional_arguments++;
+		}
+	}
+
+	// checking if there exists a text to highlight
+	if (positional_arguments == 0){
+		print_error("Missing text to highlight");
+		return -1;
+	}
+
+	// successful parsing
+	return 0;
+}
+
+int main (int argc, char *argv[]){
+	Settings setting = {.input_stream = stdin, .output_stream = stdout, .color_str = "RED", .search_text = "", .prefix = "", .postfix = "", .no_color = false};
+
+	int process_args_status = process_args(argc, argv, &settings);
+
+	return 0;
 }
