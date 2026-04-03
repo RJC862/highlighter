@@ -295,7 +295,7 @@ int main (int argc, char *argv[]){
 		.input_stream = stdin, 
 		.output_stream = stdout, 
 		.color_str = "RED", 
-		.search_text = "", 
+		.search_text = NULL,
 		.prefix = "", 
 		.postfix = "", 
 		.no_color = false};
@@ -308,13 +308,14 @@ int main (int argc, char *argv[]){
 		return -1;
 	}
 
-	if (strcmp(settings.search_text, "") == 0){
-		return 0;
-	}
-
 	// exits after using -h or --help
 	if (process_args_status == 1){
 		return 0;
+	}
+
+	if (settings.search_text[0] == '\0'){
+		print_error("Empty search text");
+		return -1;
 	}
 
 	// reading from the input file and writing to the output file
