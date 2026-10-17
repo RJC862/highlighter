@@ -1,3 +1,8 @@
+# Overview
+This is one of my projects for my Systems Programming course. See project details & description below
+A program for finding strings in input text and highlighting them.
+source code in highlighter.c
+
 # highlighter Programming Assignment
 
 In this assignment, you are going to implement your own CLI program called `highlighter` which utilizes many aspects of IO in C and Linux/Unix. You'll get experience using file descriptors or streams, different IO patterns, string functions, error handling, and argument parsing.
